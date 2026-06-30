@@ -1,0 +1,32 @@
+import type { FC } from 'react';
+import { HomeComponentWrapper, Content } from './HomeComponent.styled';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/auth/auth.store';
+
+interface HomeComponentProps {}
+
+const HomeComponent: FC<HomeComponentProps> = () => {
+   const navigate = useNavigate();
+   const authStore = useAuthStore();
+
+   const handleLogin = async () => {
+      try {
+         await authStore.login('google.com');
+         navigate('/items');
+      } catch (error) {
+         console.error('Login failed:', error);
+      }
+   }
+   
+   return (
+      <HomeComponentWrapper>
+         <Content>
+            <h1>Welcome!</h1>
+            <button onClick={handleLogin}>Login</button>
+         </Content>
+         
+      </HomeComponentWrapper>
+   );
+};
+
+export default HomeComponent;
