@@ -2,6 +2,7 @@ import { useState, useEffect, type FC } from 'react';
 import { EmptyState, GameListComponentWrapper } from './GameListComponent.styled';
 import GameListItem from './GameListItem/GameListItem';
 import AddGameComponent from './AddGameComponent/AddGameComponent';
+import NavbarComponent from '../NavbarComponent/NavbarComponent';
 import { GameItemMockDB } from '../../store/game-item/game-item.mock';
 import type { GameItem } from '../../store/game-item/game-item.model';
 import { dbService } from '../../services/dbService';
@@ -59,6 +60,7 @@ const GameListComponent: FC<GameListComponentProps> = () => {
 
    return (
       <GameListComponentWrapper>
+         <NavbarComponent></NavbarComponent>
          <h1>{(authStore.user as any)?.name}'s Game List</h1>
          <AddGameComponent onGameAdded={handleGameAdded}></AddGameComponent>
 
