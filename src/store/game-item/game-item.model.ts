@@ -5,6 +5,7 @@ export interface GameItem {
   __userId: string;
   game: string;
   rating: number;
+  status?: string;
   _createdAt?: Timestamp;
   _updatedAt?: Timestamp;
 }

@@ -18,4 +18,8 @@ export const AddGame = styled.button`
     width: 10%;
     height: 30px;
     cursor: pointer;
+    background-color: green;
+    border-radius: 4px;
+    color: white;
+    border: none;
 `

@@ -6,6 +6,7 @@ export const GameItem_DB: GameItem[] = [
     __id: '1',
     __userId: '1',
     game: "Cyberpunk 2077",
+    status: 'Playing',
     rating: 10,
     _createdAt: Timestamp.now(),
     _updatedAt: Timestamp.now(),
@@ -14,6 +15,7 @@ export const GameItem_DB: GameItem[] = [
     __id: '2',
     __userId: '1',
     game: "Mario Odyssey",
+    status: 'Completed',
     rating: 9,
     _createdAt: Timestamp.now(),
     _updatedAt: Timestamp.now(),
@@ -22,6 +24,7 @@ export const GameItem_DB: GameItem[] = [
     __id: '3',
     __userId: '1',
     game: "GTA 6",
+    status: 'Dropped',
     rating: 10,
     _createdAt: Timestamp.now(),
     _updatedAt: Timestamp.now(),
@@ -46,4 +49,11 @@ export const GameItemMockDB = {
       GameItem_DB.splice(index, 1);
     }
   },
+
+  updateEntity: (id: string, updates: Partial<GameItem>) => {
+    const index = GameItem_DB.findIndex((item) => item.__id === id);
+    if (index !== -1) {
+      GameItem_DB[index] = { ...GameItem_DB[index], ...updates, _updatedAt: Timestamp.now() };
+    }
+  }
 };

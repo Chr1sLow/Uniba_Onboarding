@@ -1,30 +1,71 @@
-import type { FC } from 'react';
-import { GameListItemWrapper, Item, ItemData, Name, Rating, Date, Delete } from './GameListItem.styled';
+import { useState, type FC } from 'react';
+import { GameListItemWrapper, Item, ItemData, Name, Rating, Date, Edit, Delete, Status } from './GameListItem.styled';
 import type { Timestamp } from 'firebase/firestore';
 
 interface GameListItemProps {
    id: string,
    game: string,
+   status: string,
    rating: number,
-   createdAt?: Timestamp
+   updatedAt?: Timestamp
    onDelete: (id: string) => void;
+   onEdit: (id: string, newRating: number) => void;
+   onStatusChange: (id: string, status: string) => void;
 }
 
 const GameListItem: FC<GameListItemProps> = (props) => {
-   const getDate = props.createdAt 
-      ? props.createdAt.toDate().toLocaleDateString() 
+   const [isEditing, setIsEditing] = useState(false);
+   const [editRating, setEditRating] = useState(props.rating);
+
+   const getDate = props.updatedAt 
+      ? props.updatedAt.toDate().toLocaleDateString() 
       : '';
    
    const handleDelete = () => {
       props.onDelete(props.id);
+   }
+
+   const handleEdit = () => {
+      if (isEditing) {
+         // Save the rating when switching out of edit mode
+         props.onEdit(props.id, editRating);
+         setIsEditing(false);
+      } else {
+         setIsEditing(true);
+      }
+   }
+
+   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      console.log(e.target.value);
+      props.onStatusChange(props.id, e.target.value);
    }
    
    return (
       <GameListItemWrapper>
          <Item>
             <ItemData>
-               <Name>{props.game}<Date>Completed at: {getDate}</Date></Name>
-               <Rating>{props.rating}/10</Rating>
+               <Name>{props.game}<Date>Updated on: {getDate}</Date></Name>
+               <Status value={props.status} onChange={handleStatusChange}>
+                  <option value="Playing">Playing</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Dropped">Dropped</option>
+               </Status>
+               <Rating>
+                  {isEditing ? (
+                     <input 
+                        type="number" 
+                        value={editRating} 
+                        onChange={(e) => setEditRating(Number(e.target.value))} 
+                        min="0" 
+                        max="10" 
+                        style={{ width: '40px', marginRight: '4px' }}
+                     />
+                  ) : (
+                     <>{props.rating}</>
+                  )}
+                  /10
+               </Rating>
+               <Edit onClick={handleEdit}>{isEditing ? 'Save' : 'Edit'}</Edit>
                <Delete onClick={handleDelete}>Delete</Delete>
             </ItemData>
             

@@ -28,7 +28,6 @@ const GameListComponent: FC<GameListComponentProps> = () => {
       }
 
       // Use mockDB
-      console.log(userId);
       if (import.meta.env.VITE_USE_MOCK_DB === 'true') {
          setGameData(GameItemMockDB.findByUserId(userId!));
       } else {
@@ -58,6 +57,38 @@ const GameListComponent: FC<GameListComponentProps> = () => {
       }
    }
 
+   const handleEdit = (editGameId: string, newRating: number) => {
+      if (import.meta.env.VITE_USE_MOCK_DB === 'true') {
+         // Update in mockDB
+         GameItemMockDB.updateEntity(editGameId, { rating: newRating });
+
+         setGameData((prevData) => 
+            prevData.map((game) => 
+               game.__id === editGameId ? { ...game, rating: newRating } : game
+            )
+         );
+      } else {
+         // Update in firebase
+         dbService.updateEntity('games', editGameId, { rating: newRating });
+      }
+   }
+
+   const handleStatusChange = (editGameId: string, newStatus: string) => {
+      if (import.meta.env.VITE_USE_MOCK_DB === 'true') {
+         // Update in mockDB
+         GameItemMockDB.updateEntity(editGameId, { status: newStatus });
+
+         setGameData((prevData) => 
+            prevData.map((game) => 
+               game.__id === editGameId ? { ...game, status: newStatus } : game
+            )
+         );
+      } else {
+         // Update in firebase
+         dbService.updateEntity('games', editGameId, { status: newStatus });
+      }
+   }
+
    return (
       <GameListComponentWrapper>
          <NavbarComponent></NavbarComponent>
@@ -69,16 +100,21 @@ const GameListComponent: FC<GameListComponentProps> = () => {
                <p>Add games to your list</p>
             </EmptyState>
          ) : (
-         gameData.map((item) => (
-            <GameListItem 
-               key={item.__id}
-               id={item.__id}
-               game={item.game} 
-               rating={item.rating} 
-               createdAt={item._createdAt}
-               onDelete={handleDelete}
-            />
-         ))
+         [...gameData]
+            .sort((a, b) => b.rating - a.rating)
+            .map((item) => (
+               <GameListItem 
+                  key={item.__id}
+                  id={item.__id}
+                  game={item.game} 
+                  status={item.status}
+                  rating={item.rating} 
+                  updatedAt={item._updatedAt}
+                  onDelete={handleDelete}
+                  onEdit={handleEdit}
+                  onStatusChange={handleStatusChange}
+               />
+            ))
          )}
       </GameListComponentWrapper>
    );
